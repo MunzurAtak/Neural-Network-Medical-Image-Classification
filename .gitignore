@@ -4,6 +4,7 @@ __pycache__/
 data/*.csv
 data/*.jpg
 data/images/
+data/masks/
 models/*.pth
 mlruns/
 .env

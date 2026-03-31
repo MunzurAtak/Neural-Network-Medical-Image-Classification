@@ -8,6 +8,31 @@ import pandas as pd
 import numpy as np
 
 
+# Maps the one-hot column names in GroundTruth.csv to lowercase class codes
+COLUMN_TO_LABEL = {
+    'MEL': 'mel',
+    'NV': 'nv',
+    'BCC': 'bcc',
+    'AKIEC': 'akiec',
+    'BKL': 'bkl',
+    'DF': 'df',
+    'VASC': 'vasc',
+}
+
+
+def load_metadata(csv_path):
+    """
+    Loads GroundTruth.csv and converts one-hot encoded columns into
+    a single 'dx' column, returning a standard DataFrame with columns:
+    image_id, dx
+    """
+    df = pd.read_csv(csv_path)
+    label_cols = list(COLUMN_TO_LABEL.keys())
+    df['dx'] = df[label_cols].idxmax(axis=1).map(COLUMN_TO_LABEL)
+    df = df.rename(columns={'image': 'image_id'})[['image_id', 'dx']]
+    return df
+
+
 class HAM10000Dataset(Dataset):
     def __init__(self, metadata_df, image_dirs, transform=None, label_encoder=None):
         self.df = metadata_df.reset_index(drop=True)
